@@ -1,0 +1,22 @@
+gui:
+  title: "Wybierz kategorie"
+  rows: 3
+categories:
+  fight:
+    slot: 10
+    icon:
+      name: "&c&lWalka"
+      material: IRON_SWORD
+      amount: 1
+  mining:
+    slot: 13
+    icon:
+      name: "&e&lKopanie"
+      material: DIAMOND_PICKAXE
+      amount: 1
+  other:
+    slot: 16
+    icon:
+      name: "&7&lInne"
+      material: CHEST
+      amount: 1

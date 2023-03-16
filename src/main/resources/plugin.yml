@@ -1,0 +1,6 @@
+name: Titles
+version: '${project.version}'
+main: me.titles.Titles
+api-version: 1.19
+authors: [y0yeke]
+description: Main plugin

@@ -1,0 +1,184 @@
+titles:
+  default:
+    prefix: ""
+    price: 0.0
+  drwal:
+    prefix: "&f&l[&6&ldrwal&f&l] "
+    price: 5000.0
+  treser:
+    prefix: "&f&l[&7&ltreser&f&l] "
+    price: 75000.0
+  bogacz:
+    prefix: "&f&l[&d&lbogacz&f&l] "
+    price: 5000.0
+  farmer:
+    prefix: "&f&l[&2&lfarmer&f&l] "
+    price: 5000.0
+  rambo:
+    prefix: "&f&l[&e&lrambo&f&l] "
+    price: 75000.0
+  barman:
+    prefix: "&f&l[&b&lbarman&f&l] "
+    price: 5000.0
+  rybka:
+    prefix: "&f&l[&1&lrybka&f&l] "
+    price: 5000.0
+  wiedźmin:
+    prefix: "&f&l[&4&lwiedźmin&f&l] "
+    price: 75000.0
+  górnik:
+    prefix: "&f&l[&8&lgórnik&f&l] "
+    price: 5000.0
+  Misiek:
+    prefix: "&f&l[&a&lMisiek&f&l] "
+    price: 75000.0
+  Morderca:
+    prefix: "&f&l[&c&lMorderca&f&l] "
+    price: 75000.0
+  Łowca Głów:
+    prefix: "&f&l[&c&lŁowca Głów&f&l] "
+    price: 75000.0
+  Pechowiec:
+    prefix: "&f&l[&9&lPechowiec&f&l] "
+    price: 75000.0
+  Zbrojmistrz:
+    prefix: "&f&l[&7&lZbrojmistrz&f&l] "
+    price: 75000.0
+  Krezus:
+    prefix: "&f&l[&6&lKrezus&f&l] "
+    price: 75000.0
+  Ziemniak:
+    prefix: "&f&l[&6&lZiemniak&f&l] "
+    price: 75000.0
+  Doświadczony:
+    prefix: "&f&l[&6&lDoświadczony&f&l] "
+    price: 75000.0
+  Latarnik:
+    prefix: "&f&l[&e&lLatarnik&f&l] "
+    price: 75000.0
+  Cieśla:
+    prefix: "&f&l[&6&lCieśla&f&l] "
+    price: 75000.0
+  Obieżyświat:
+    prefix: "&f&l[&6&lObieżyświat&f&l] "
+    price: 75000.0
+  Pseudobohater:
+    prefix: "&f&l[&d&lPseudobohater&f&l] "
+    price: 75000.0
+  Quester:
+    prefix: "&f&l[&9&lQuester&f&l] "
+    price: 75000.0
+  Raper:
+    prefix: "&f&l[&6&lRaper&f&l] "
+    price: 75000.0
+  Artysta:
+    prefix: "&f&l[&6&lArtysta&f&l] "
+    price: 50000.0
+  Milioner:
+    prefix: "&f&l[&5&lMilioner&f&l] "
+    price: 1000000.0
+  Skyblockowiec:
+    prefix: "&f&l[&2&lSkyblockowiec&f&l] "
+    price: 30000.0
+  Assassin:
+    prefix: "&f&l[&4&lAssassin&f&l] "
+    price: 20000.0
+  Architekt:
+    prefix: "&f&l[&6&lArchitekt&f&l] "
+    price: 10000.0
+  Alchemik:
+    prefix: "&f&l[&b&lAlchemik&f&l] "
+    price: 45000.0
+  Superman:
+    prefix: "&f&l[&c&lSuperman&f&l] "
+    price: 30000.0
+  Sauron:
+    prefix: "&f&l[&3&lSauron&f&l] "
+    price: 150000.0
+  Książe Ciemności:
+    prefix: "&f&l[&8&lKsiąże Ciemności&f&l] "
+    price: 75000.0
+  Anioł:
+    prefix: "&f&l[&f&lAnioł&f&l] "
+    price: 20000.0
+  Archanioł:
+    prefix: "&f&l[&f&lArchanioł&f&l] "
+    price: 200000.0
+  Demon:
+    prefix: "&f&l[&c&lDemon&f&l] "
+    price: 666.0
+  Lucyfer:
+    prefix: "&f&l[&d&lLucyfer&f&l] "
+    price: 666666.0
+  Romantyk:
+    prefix: "&f&l[&c&lRomantyk&f&l] "
+    price: 75000.0
+  Hobbit:
+    prefix: "&f&l[&a&lHobbit&f&l] "
+    price: 75000.0
+  Elf:
+    prefix: "&f&l[&a&lElf&f&l] "
+    price: 75000.0
+  Marzyciel:
+    prefix: "&f&l[&6&lMarzyciel&f&l] "
+    price: 75000.0
+  Górnik:
+    prefix: "&f&l[&8&lGórnik&f&l] "
+    price: 5000.0
+  Rzeźnik:
+    prefix: "&f&l[&c&lRzeźnik&f&l] "
+    price: 5000.0
+  Kucharz:
+    prefix: "&f&l[&6&lKucharz&f&l] "
+    price: 5000.0
+  Czarodziej:
+    prefix: "&f&l[&b&lCzarodziej&f&l] "
+    price: 10000.0
+  Księżniczka:
+    prefix: "&f&l[&f&lKsiężniczka&f&l] "
+    price: 100000.0
+  Książe:
+    prefix: "&f&l[&f&lKsiąże&f&l] "
+    price: 100000.0
+  Król:
+    prefix: "&f&l[&f&lKról&f&l] "
+    price: 200000.0
+  Królowa:
+    prefix: "&f&l[&f&lKrólowa&f&l] "
+    price: 100000.0
+  Pirat Wyspowy:
+    prefix: "&f&l[&2&lPirat Wyspowy&f&l] "
+    price: 75000.0
+  Party Guy:
+    prefix: "&f&l[&d&lParty Guy&f&l] "
+    price: 75000.0
+  Joker:
+    prefix: "&f&l[&c&lJoker&f&l] "
+    price: 75000.0
+  Mistrz:
+    prefix: "&f&l[&6&lMistrz&f&l] "
+    price: 200000.0
+  Bohater:
+    prefix: "&f&l[&6&lBohater&f&l] "
+    price: 75000.0
+  Posejdon:
+    prefix: "&f&l[&1&lPosejdon&f&l] "
+    price: 75000.0
+  Cesarz:
+    prefix: "&f&l[&c&lCesarz&f&l] "
+    price: 1500000.0
+  Tryhardowiec:
+    prefix: "&f&l[&6&lTryhardowiec&f&l] "
+    price: 75000.0
+  Wojownik:
+    prefix: "&f&l[&7&lWojownik&f&l] "
+    price: 75000.0
+  Postrach Mobów:
+    prefix: "&f&l[&7&lPostrach Mobów&f&l] "
+    price: 75000.0
+  Strzelec Wyborowy:
+    prefix: "&f&l[&7&lStrzelec Wyborowy&f&l] "
+    price: 75000.0
+  Car:
+    prefix: "&f&l[&c&lCar&f&l] "
+    price: 3000000.0
