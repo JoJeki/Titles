@@ -123,20 +123,18 @@ public class TitleController {
 
         String command = "";
         String prefixCommand;
-        String prefix = PlaceholderAPI.setBracketPlaceholders(Bukkit.getPlayer("" + nickname), "{PREFIX}");
-        String suffixFromPrefix = prefix.substring(prefix.lastIndexOf(" ") + 1 );
         if(!owner.getCurrentTitle().equalsIgnoreCase("none")){
-            command = "lp user " + nickname + " meta removesuffix 10 * prison]";
+            command = "lp user " + nickname + " meta removeprefix 10 * prison";
 
             Debug.log("[Unset command] " + command);
             Bukkit.getServer().dispatchCommand(Bukkit.getConsoleSender(), command);
         }
 
-        prefixCommand = "\"suffix.10." + title.getPrefix() + suffixFromPrefix + "\"";
+        prefixCommand = "\"prefix.10." + title.getPrefix() + "&r\"";
 
         owner.setCurrentTitle(titleName);
 
-        command = "lp user " + nickname + " permission set " + prefixCommand + " server=prison]";
+        command = "lp user " + nickname + " permission set " + prefixCommand + " server=prison";
         Debug.log("[Set command] " + command);
         Bukkit.getServer().dispatchCommand(Bukkit.getConsoleSender(), command);
     }
@@ -162,13 +160,13 @@ public class TitleController {
 
                 Debug.log("&aSuffix nie jest prawidlowy... Poprawiam");
 
-                String clearSuffixCommand = "lp user " + player.getName() + " meta removesuffix 10 * prison]";
+                String clearSuffixCommand = "lp user " + player.getName() + " meta removeprefix 10 * prison";
 
                 Debug.log("[Unset command] " + clearSuffixCommand);
                 Bukkit.getServer().dispatchCommand(Bukkit.getConsoleSender(), clearSuffixCommand);
 
-                String prefixCommand = "\"suffix.10." + availableTitles.get(title.getName()).getPrefix() + colorFromPrefix + "\"";
-                String command = "lp user " + player.getName() + " permission set " + prefixCommand + " server=prison]";
+                String prefixCommand = "\"prefix.10." + availableTitles.get(title.getName()).getPrefix() + colorFromPrefix + "&r\"";
+                String command = "lp user " + player.getName() + " permission set " + prefixCommand + " server=prison";
                 Debug.log("[Set command] " + command);
                 Bukkit.getServer().dispatchCommand(Bukkit.getConsoleSender(), command);
             }

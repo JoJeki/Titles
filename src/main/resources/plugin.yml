@@ -4,3 +4,7 @@ main: me.titles.Titles
 api-version: 1.19
 authors: [y0yeke]
 description: Main plugin
+depend: [LuckPerms, Vault]
+commands:
+  sbtitle:
+    description: lolw

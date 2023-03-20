@@ -24,7 +24,7 @@ public class TitleCommand implements CommandExecutor {
     public boolean onCommand(@NotNull CommandSender sender, @NotNull Command command, @NotNull String label, @NotNull String[] args) {
 
         if(sender instanceof ConsoleCommandSender){
-            Debug.log("&aSender is console!");
+            Debug.log("&aSender is console!.");
         }
 
         if(args.length == 1){

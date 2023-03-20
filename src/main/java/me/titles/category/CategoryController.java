@@ -1,7 +1,5 @@
 package me.titles.category;
 
-//import me.mattstudios.mfgui.gui.components.ItemBuilder;
-//import me.mattstudios.mfgui.gui.guis.Gui;
 import dev.triumphteam.gui.builder.item.ItemBuilder;
 import dev.triumphteam.gui.guis.Gui;
 import me.titles.Titles;
@@ -11,9 +9,6 @@ import org.bukkit.Material;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
-//import pl.pijok.titles.Titles;
-//import pl.pijok.titles.essentials.ChatUtils;
-//import pl.pijok.titles.essentials.ConfigUtils;
 
 public class CategoryController {
 
