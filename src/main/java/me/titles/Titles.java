@@ -2,6 +2,7 @@ package me.titles;
 
 import me.titles.category.CategoryController;
 import me.titles.commands.TitleCommand;
+import me.titles.commands.TitleTabCompleter;
 import me.titles.essentials.Debug;
 import me.titles.listeners.JoinListener;
 import me.titles.listeners.QuitListener;
@@ -10,14 +11,6 @@ import me.titles.title.TitleController;
 import net.milkbowl.vault.economy.Economy;
 import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.plugin.java.JavaPlugin;
-//import pl.pijok.titles.category.CategoryController;
-//import pl.pijok.titles.commands.TitleCommand;
-//import pl.pijok.titles.essentials.Debug;
-//import pl.pijok.titles.listeners.JoinListener;
-//import pl.pijok.titles.listeners.QuitListener;
-//import pl.pijok.titles.owner.OwnerController;
-//import pl.pijok.titles.title.TitleController;
-
 
 public class Titles extends JavaPlugin {
 
@@ -45,6 +38,7 @@ public class Titles extends JavaPlugin {
         getServer().getPluginManager().registerEvents(new QuitListener(), this);
 
         getCommand("sbtitle").setExecutor(new TitleCommand());
+        getCommand("sbtitle").setTabCompleter(new TitleTabCompleter());
 
         loadStuff();
 
@@ -58,6 +52,7 @@ public class Titles extends JavaPlugin {
     public void loadStuff() {
 
         Debug.log("&aLoading Titles v1.0 by Pijok_");
+        Debug.log("&aRedesigned by y0yek");
 
         Debug.log("&7Loading categories gui...");
         categoryController.load();

@@ -13,7 +13,7 @@ public class Debug {
      * @param a Message to send
      */
     public static void log(String a) {
-        a = prefix + a;
+        a = prefix +" "+ a;
         console.sendMessage(a.replace("&", "§"));
     }
 

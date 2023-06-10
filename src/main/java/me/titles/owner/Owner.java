@@ -1,9 +1,5 @@
 package me.titles.owner;
 
-//import pl.pijok.titles.title.Title;
-//
-//import java.util.ArrayList;
-
 import me.titles.title.Title;
 
 import java.util.ArrayList;

@@ -1,16 +1,13 @@
 package me.titles.essentials;
 
-//import me.mattstudios.mfgui.gui.components.ItemBuilder;
 import me.titles.Titles;
-import org.bukkit.Bukkit;
-import org.bukkit.Location;
+
 import org.bukkit.Material;
 import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.Plugin;
-//import pl.pijok.titles.Titles;
 
 import java.io.File;
 import java.io.IOException;

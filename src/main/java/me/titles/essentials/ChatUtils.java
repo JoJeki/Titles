@@ -6,7 +6,7 @@ import org.bukkit.entity.Player;
 
 public class ChatUtils {
 
-    private static String prefix = "&f&l[&a&lSky&2&lBlock&f&l] ";
+    private static String prefix = "&8&lPRISON &7» &r";
 
     /**
      * Changes & to minecraft colors
