@@ -1,7 +1,6 @@
 package me.titles.commands;
 
 import me.titles.Titles;
-import me.titles.essentials.ChatUtils;
 import me.titles.essentials.Debug;
 import me.titles.owner.Owner;
 import me.titles.title.Title;
@@ -13,129 +12,123 @@ import org.bukkit.command.ConsoleCommandSender;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
+import static me.titles.essentials.ChatUtils.*;
+
 public class TitleCommand implements CommandExecutor {
 
     @Override
     public boolean onCommand(@NotNull CommandSender sender, @NotNull Command command, @NotNull String label, @NotNull String[] args) {
 
         if(sender instanceof ConsoleCommandSender){
-            Debug.log("&aSender is console!");
+            Debug.log("&cCommand only executable by player!");
+            return true;
         }
 
-        if(args.length == 0) {
-            if (sender instanceof Player) {
-                Player player = (Player) sender;
-                Titles.getTitleController().openMainGui(player);
-                return true;
-            } else {
-                ChatUtils.sendMessage(sender, "&cTa komenda jest tylko dla graczy!");
-                return true;
+        if (sender instanceof Player) {
+            Player player = (Player) sender;
+
+            if(args.length == 0) {
+                Titles.getTitleController().openShopMenu(player);
             }
-        }
-        if (args.length == 1) {
-            if (sender.hasPermission("titles.admin")) {
-                if (args[0].equalsIgnoreCase("reload")) {
-                    if (sender instanceof Player) {
-                        Player player = (Player) sender;
-                        ChatUtils.sendMessage(player, "&cBrak uprawnień!");
+
+            if (args.length == 1) {
+                if (sender.hasPermission("titlesreborn.admin")) {
+                    if (args[0].equalsIgnoreCase("reload")) {
+
+                        player.sendMessage(color("&aReloaded!"));
+                        Titles.getInstance().loadStuff();
                         return true;
+
                     }
-                    ChatUtils.sendMessage(sender, "&aReloaded!");
-                    Titles.getInstance().loadStuff();
-                    return true;
-                }
-                if (args[0].equalsIgnoreCase("help")) {
-                    if (sender instanceof Player) {
-                        ChatUtils.sendMessage(sender, "&e/tytuly &7- Menu z tytułami.");
-                        ChatUtils.sendMessage(sender, "&e/tytuly reload &7- Ponowne wczytanie pluginu.");
-                        ChatUtils.sendMessage(sender, "&e/tytuly help &7- Menu pomocy.");
-                        ChatUtils.sendMessage(sender, "&e/tytuly give <nick> <title> &7- Nadawanie");
-                        ChatUtils.sendMessage(sender, "&e/tytuly take <nick> <title> &7- Odbieranie");
-                        ChatUtils.sendMessage(sender, "&e/tytuly show <nick> &7- Lista tytułów gracza.");
-                    }
-                }
-            }
-        }
+                    if (args[0].equalsIgnoreCase("help")) {
 
-        if(args.length == 2){
-            if (sender.hasPermission("titles.admin")) {
-                if (args[0].equalsIgnoreCase("show")) {
-
-                    if (sender instanceof Player) {
-                        Player player = (Player) sender;
-                        if (!player.hasPermission("titles.admin")) {
-                            ChatUtils.sendMessage(player, "&cBrak uprawnień!");
-                            return true;
-                        }
-                    }
-
-                    Player target = Bukkit.getPlayer(args[1]);
-
-                    if (target == null || !target.isOnline()) {
-                        Debug.log("&cPlayer is offline!");
+                        player.sendMessage(color("&e▪ &6/tytuly &7- &fMenu z tytułami."));
+                        player.sendMessage(color("&e▪ &6/tytuly reload &7- &fReload."));
+                        player.sendMessage(color("&e▪ &6/tytuly help &7- &fMenu pomocy."));
+                        player.sendMessage(color("&e▪ &6/tytuly give <nick> <title> &7- &fNadawanie"));
+                        player.sendMessage(color("&e▪ &6/tytuly take <nick> <title> &7- &fOdbieranie"));
+                        player.sendMessage(color("&e▪ &6/tytuly show <nick> &7- &fTytuły gracza."));
                         return true;
-                    }
 
-                    StringBuilder stringBuilder = new StringBuilder("&eTytuły gracza: &7");
-
-                    Owner owner = Titles.getOwnerController().getOwner(target.getName());
-                    if (owner.getUnlockedTitles() == null || owner.getUnlockedTitles().size() == 0) {
-                        stringBuilder.append("&cBrak");
-                    } else {
-                        for (Title title : owner.getUnlockedTitles()) {
-                            stringBuilder.append(title.getName()).append(", ");
-                        }
                     }
-                    ChatUtils.sendMessage(sender, stringBuilder.toString());
+                } else {
+                    prefix(player, "&cBrak uprawnień!");
                     return true;
                 }
             }
-        }
+            if(args.length == 2){
+                if (sender.hasPermission("titlesreborn.admin")) {
+                    if (args[0].equalsIgnoreCase("show")) {
 
-        if(args.length == 3){
-            if (sender.hasPermission("titles.admin")) {
-                if (args[0].equalsIgnoreCase("give")) {
+                        Player target = Bukkit.getPlayer(args[1]);
 
-                    if (sender instanceof Player) {
-                        Player player = (Player) sender;
-                        if (!player.hasPermission("titles.admin")) {
-                            ChatUtils.sendMessage(player, "&cBrak uprawnień!");
+                        if (target == null || !target.isOnline()) {
+                            prefix(player, "&cGracz jest nieaktywny!");
                             return true;
                         }
-                    }
 
-                    Player target = Bukkit.getPlayer(args[1]);
+                        Owner owner = Titles.getOwnerController().getOwner(target.getName());
+                        StringBuilder stringBuilder = new StringBuilder(" &e&lTytuły gracza " + target.getName() + "&e&l:\n&7");
 
-                    if (target == null || !target.isOnline()) {
-                        ChatUtils.sendMessage(sender, "&cPlayer is offline!");
+                        if (owner.getUnlockedTitles() == null || owner.getUnlockedTitles().size() == 0) {
+                            prefix(player, "&cGracz " + target.getName() + " &cnie posiada żadnego tytułu!");
+                            return true;
+                        } else {
+                            for (Title title : owner.getUnlockedTitles()) {
+                                stringBuilder.append("&7▪ " + title.getPrefix() + "&7(" + title.getName() + "&7)\n");
+                            }
+                        }
+                        player.sendMessage(color(stringBuilder.toString()));
                         return true;
                     }
-
-                    Titles.getTitleController().addPlayerTitle(target.getName(), args[2]);
-                    ChatUtils.sendMessage(sender, "&aWykonano akcję!");
-                    return true;
                 }
+            }
+            if(args.length == 3){
+                if (sender.hasPermission("titlesreborn.admin")) {
+                    if (args[0].equalsIgnoreCase("give")) {
 
-                if (args[0].equalsIgnoreCase("take")) {
+                        Player target = Bukkit.getPlayer(args[1]);
 
-                    if (sender instanceof Player) {
-                        Player player = (Player) sender;
-                        if (!player.hasPermission("titles.admin")) {
-                            ChatUtils.sendMessage(player, "&cBrak uprawnień!");
+                        if (target == null || !target.isOnline()) {
+                            prefix(player, "&cGracz jest nieaktywny!");
                             return true;
                         }
-                    }
 
-                    Player target = Bukkit.getPlayer(args[1]);
-
-                    if (target == null || !target.isOnline()) {
-                        ChatUtils.sendMessage(sender, "&cPlayer is offline!");
+                        Titles.getTitleController().addPlayerTitle(target.getName(), args[2]);
+                        prefix(player, "&7Pomyślnie przyznano tytuł &e&l" + args[2] + " &7dla gracza &e" + target.getName() + "&7!");
+                        prefix(target, "&7Otrzymałeś/aś tytuł &e&l" + args[2] + "&7!");
                         return true;
                     }
 
-                    Titles.getTitleController().removePlayerTitle(target.getName(), args[2]);
-                    ChatUtils.sendMessage(sender, "&aWykonano akcję!");
-                    return true;
+                    if (args[0].equalsIgnoreCase("take")) {
+
+                        Player target = Bukkit.getPlayer(args[1]);
+
+                        if (target == null || !target.isOnline()) {
+                            prefix(player, "&cGracz jest nieaktywny!");
+                            return true;
+                        }
+
+                        Titles.getTitleController().removePlayerTitle(target.getName(), args[2]);
+                        prefix(player, "&7Pomyślnie odebrano tytuł &e" + args[2] + " &7graczu &e" + target.getName() + "&7!");
+                        prefix(target, "&7Odebrano ci tytuł &e&l" + args[2] + "&7!");
+                        return true;
+                    }
+
+                    if (args[0].equalsIgnoreCase("set")) {
+
+                        Player target = Bukkit.getPlayer(args[1]);
+
+                        if (target == null || !target.isOnline()) {
+                            prefix(player, "&cGracz jest nieaktywny!");
+                            return true;
+                        }
+
+                        Titles.getTitleController().removePlayerTitle(target.getName(), args[2]);
+                        prefix(player, "&7Pomyślnie odebrano tytuł &e" + args[2] + " &7graczu &e" + target.getName() + "&7!");
+                        prefix(target, "&7Odebrano ci tytuł &e&l" + args[2] + "&7!");
+                        return true;
+                    }
                 }
             }
         }

@@ -1,6 +1,5 @@
 package me.titles;
 
-import me.titles.category.CategoryController;
 import me.titles.commands.TitleCommand;
 import me.titles.commands.TitleTabCompleter;
 import me.titles.essentials.Debug;
@@ -17,8 +16,9 @@ public class Titles extends JavaPlugin {
     private static Titles instance;
     private static TitleController titleController;
     private static OwnerController ownerController;
-    private static CategoryController categoryController;
     private static Economy econ = null;
+    public static final String prefix = "&a&lSKYBLOCK &7» &r";
+    public static final String server = "skyblock";
 
     @Override
     public void onEnable() {
@@ -26,7 +26,6 @@ public class Titles extends JavaPlugin {
 
         titleController = new TitleController();
         ownerController = new OwnerController();
-        categoryController = new CategoryController();
 
         if (!setupEconomy() ) {
             Debug.log(String.format("[%s] - Disabled due to no Vault dependency found!", getDescription().getName()));
@@ -37,8 +36,8 @@ public class Titles extends JavaPlugin {
         getServer().getPluginManager().registerEvents(new JoinListener(), this);
         getServer().getPluginManager().registerEvents(new QuitListener(), this);
 
-        getCommand("sbtitle").setExecutor(new TitleCommand());
-        getCommand("sbtitle").setTabCompleter(new TitleTabCompleter());
+        getCommand("tytuly").setExecutor(new TitleCommand());
+        getCommand("tytuly").setTabCompleter(new TitleTabCompleter());
 
         loadStuff();
 
@@ -54,14 +53,8 @@ public class Titles extends JavaPlugin {
         Debug.log("&aLoading Titles v1.0 by Pijok_");
         Debug.log("&aRedesigned by y0yek");
 
-        Debug.log("&7Loading categories gui...");
-        categoryController.load();
-
         Debug.log("&7Loading titles...");
         titleController.load();
-
-        Debug.log("&7Loading gui...");
-        titleController.loadGui();
 
         Debug.log("&aEverything loaded! Starting!");
 
@@ -93,10 +86,6 @@ public class Titles extends JavaPlugin {
 
     public static OwnerController getOwnerController() {
         return ownerController;
-    }
-
-    public static CategoryController getCategoryController() {
-        return categoryController;
     }
 
 }

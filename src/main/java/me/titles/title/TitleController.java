@@ -1,36 +1,36 @@
 package me.titles.title;
 
 import dev.triumphteam.gui.builder.item.ItemBuilder;
+import dev.triumphteam.gui.builder.item.SkullBuilder;
+import dev.triumphteam.gui.components.GuiAction;
+import dev.triumphteam.gui.components.InteractionModifier;
 import dev.triumphteam.gui.guis.Gui;
 import dev.triumphteam.gui.guis.GuiItem;
 import dev.triumphteam.gui.guis.PaginatedGui;
-import me.clip.placeholderapi.PlaceholderAPI;
 import me.titles.Titles;
-import me.titles.essentials.ChatUtils;
 import me.titles.essentials.ConfigUtils;
 import me.titles.essentials.Debug;
 import me.titles.owner.Owner;
+import net.kyori.adventure.text.Component;
 import net.md_5.bungee.api.ChatColor;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.configuration.file.YamlConfiguration;
+import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
-import org.jetbrains.annotations.NotNull;
-//import org.bukkit.event.EventHandler;
-//import org.bukkit.inventory.ItemStack;
-//import pl.pijok.titles.Titles;
-//import pl.pijok.titles.essentials.ChatUtils;
-//import pl.pijok.titles.essentials.ConfigUtils;
-//import pl.pijok.titles.essentials.Debug;
-//import pl.pijok.titles.essentials.ItemCreator;
-//import pl.pijok.titles.owner.Owner;
+import org.bukkit.inventory.ItemFlag;
+import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.ItemMeta;
 
 import java.awt.*;
+import java.lang.reflect.Array;
 import java.text.DecimalFormat;
-import java.util.ArrayList;
-import java.util.LinkedHashMap;
+import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+import static me.titles.Titles.server;
+import static me.titles.essentials.ChatUtils.*;
 
 public class TitleController {
 
@@ -44,15 +44,8 @@ public class TitleController {
 
         for(String titleName : configuration.getConfigurationSection("titles").getKeys(false)){
 
-            String category = "other";
-
-            if(configuration.contains("titles." + titleName + ".category")){
-                category = configuration.getString("titles." + titleName + ".category");
-            }
-
             Title title = new Title(
                     titleName,
-                    category,
                     configuration.getString("titles." + titleName + ".prefix"),
                     configuration.getDouble("titles." + titleName + ".price")
             );
@@ -60,32 +53,6 @@ public class TitleController {
         }
     }
 
-    public void loadGui(){
-
-        mainGui = new Gui(3, " ");
-
-        mainGui.setDefaultClickAction(event -> {
-            event.setCancelled(true);
-        });
-
-        mainGui.setItem(11, ItemBuilder.from(Material.PAPER).setName(ChatUtils.fixColor("&7• &ePosiadane tytuły &7•")).asGuiItem(event -> {
-
-            openTitleSelect((Player) event.getWhoClicked());
-
-        }));
-
-        mainGui.setItem(15, ItemBuilder.from(Material.BOOK).setName(ChatUtils.fixColor("&7• &aZakup nowy tytuł &7•")).asGuiItem(event -> {
-
-            Titles.getTitleController().openShop((Player) event.getWhoClicked(), "other");
-            //Titles.getCategoryController().openCategorySelect((Player) event.getWhoClicked());
-
-        }));
-
-        GuiItem fillItem = ItemBuilder.from(Material.GRAY_STAINED_GLASS_PANE).setName(" ").asGuiItem();
-
-        mainGui.getFiller().fill(fillItem);
-
-    }
 
     public void addPlayerTitle(String nickname, String titleName){
         Title title = availableTitles.get(titleName);
@@ -122,9 +89,9 @@ public class TitleController {
         String command = "";
         String prefixCommand;
         if(!owner.getCurrentTitle().equalsIgnoreCase("none")){
-            command = "lp user " + nickname + " meta removeprefix 10 * server=prison";
+            command = "lp user " + nickname + " meta removeprefix 10 * server="+server;
 
-            Debug.log("[Unset command] " + command);
+            Debug.log(command);
             Bukkit.getServer().dispatchCommand(Bukkit.getConsoleSender(), command);
         }
 
@@ -132,219 +99,229 @@ public class TitleController {
 
         owner.setCurrentTitle(titleName);
 
-        command = "lp user " + nickname + " permission set " + prefixCommand + " server=prison";
-        Debug.log("[Set command] " + command);
+        command = "lp user " + nickname + " permission set " + prefixCommand + " server="+server;
+        Debug.log(command);
         Bukkit.getServer().dispatchCommand(Bukkit.getConsoleSender(), command);
-    }
-
-    public void checkTitle(Player player){
-
-        Debug.log("&aSprawdzanie tytulu gracza " + player.getName());
-
-        Owner owner = Titles.getOwnerController().getOwner(player.getName());
-        Title title = availableTitles.get(owner.getCurrentTitle());
-
-        if(!owner.getCurrentTitle().equalsIgnoreCase("none")){
-
-            String prefix = PlaceholderAPI.setBracketPlaceholders(player, "");
-            String colorFromPrefix = prefix.substring(prefix.lastIndexOf(" ") + 1 );
-
-            String suffix = PlaceholderAPI.setBracketPlaceholders(player, "");
-            String colorFromSuffix = suffix.substring(suffix.lastIndexOf(" ") + 1 );
-
-            if(!colorFromPrefix.equalsIgnoreCase(colorFromSuffix) ){
-                Debug.log("PrefixColor: " + colorFromPrefix + "PrefixTest");
-                Debug.log("SuffixColor: " + colorFromSuffix + "SuffixTest");
-
-                Debug.log("&aSuffix nie jest prawidlowy... Poprawiam");
-
-                String clearSuffixCommand = "lp user " + player.getName() + " meta removeprefix 10 * server=prison";
-
-                Debug.log("[Unset command] " + clearSuffixCommand);
-                Bukkit.getServer().dispatchCommand(Bukkit.getConsoleSender(), clearSuffixCommand);
-
-                String prefixCommand = "\"prefix.10." + availableTitles.get(title.getName()).getPrefix() + colorFromPrefix + "&r\"";
-                String command = "lp user " + player.getName() + " permission set " + prefixCommand + " server=prison";
-                Debug.log("[Set command] " + command);
-                Bukkit.getServer().dispatchCommand(Bukkit.getConsoleSender(), command);
-            }
-            else{
-                Debug.log("&aSuffix jest prawidlowy");
-            }
-        }
     }
 
     public Title getTitle(String titleName){
         return availableTitles.get(titleName);
     }
 
-    public void openMainGui(Player player){
-        mainGui.open(player);
-    }
 
-    public void openShop(Player player, String category){
+    public void openShopMenu(Player player) {
         Owner owner = Titles.getOwnerController().getOwner(player.getName());
 
         ArrayList<Title> notUnlockedTitles = new ArrayList<>();
 
-        for(String titleName : availableTitles.keySet()){
+        for (String titleName : availableTitles.keySet()) {
 
-            if(titleName.equalsIgnoreCase("default")){
+            if (titleName.equalsIgnoreCase("default")) {
                 continue;
             }
 
             Title title = availableTitles.get(titleName);
 
-            if(!title.getCategory().equalsIgnoreCase(category)){
+            if (!owner.getUnlockedTitles().contains(title)) {
+                notUnlockedTitles.add(title);
+            }
+        }
+        if (notUnlockedTitles.size() != 0) {
+            PaginatedGui shopMenu = new PaginatedGui(6, 21, " ", Collections.singleton(InteractionModifier.PREVENT_ITEM_TAKE));
+
+            shopMenu.setDefaultClickAction(event -> {
+                event.setCancelled(true);
+            });
+
+            int[] grayLocked = new int[]
+                    {0, 1, 2, 3, 4, 5, 6, 7, 8,
+                            9, 17,
+                            18, 26,
+                            27, 35,
+                            36, 37, 38, 39, 40, 41, 42, 43, 44};
+
+            int[] blackLocked = new int[]
+                    {45, 46, 47, 48, 51, 52, 53};
+
+            GuiItem grayFiller = ItemBuilder.from(Material.GRAY_STAINED_GLASS_PANE).name(Component.text(" ")).asGuiItem();
+
+            GuiItem blackFiller = ItemBuilder.from(Material.BLACK_STAINED_GLASS_PANE).name(Component.text(" ")).asGuiItem();
+
+            for (int slot : grayLocked) {
+                shopMenu.setItem(slot, grayFiller);
+            }
+
+            for (int slot : blackLocked) {
+                shopMenu.setItem(slot, blackFiller);
+            }
+
+            shopMenu.setItem(48, ItemBuilder.from(Material.RED_STAINED_GLASS_PANE).setName(color("&c←")).asGuiItem(event2 -> {
+                shopMenu.previous();
+                shopMenu.updateTitle(translate("&#29dcfb&lS&#2ad6fb&lK&#2cd0fb&lL&#2dcafb&lE&#2fc4fb&lP &#30befb&lZ &#31b8fb&lT&#33b1fb&lY&#34abfb&lT&#35a5fb&lU&#379ffb&lŁ&#3899fb&lA&#3a93fb&lM&#3b8dfb&lI &7") + shopMenu.getCurrentPageNum() + "/" + shopMenu.getPagesNum());
+                shopMenu.update();
+            }));
+
+            String name = color("&e&lTWOJE TYTUŁY");
+            String lore = color("&7ᴋʟɪᴋɴɪᴊ, ᴀʙʏ ᴏᴛᴡᴏʀᴢʏᴄ ᴅᴏsᴛᴇᴘɴᴇ ᴛʏᴛᴜʟʏ!");
+
+            shopMenu.setItem(49, ItemBuilder.from(Material.BOOK).setName(name).setLore(" ", lore).asGuiItem(event1 -> {
+                if(owner.getUnlockedTitles().size() >= 1) {
+                    openChooseMenu(player);
+                } else {
+                    prefix(player, "&cNie posiadasz żadnego tytułu!");
+                }
+            }));
+
+            shopMenu.setItem(50, ItemBuilder.from(Material.LIME_STAINED_GLASS_PANE).setName(color("&a→")).asGuiItem(event -> {
+                shopMenu.next();
+                shopMenu.updateTitle(translate("&#29dcfb&lS&#2ad6fb&lK&#2cd0fb&lL&#2dcafb&lE&#2fc4fb&lP &#30befb&lZ &#31b8fb&lT&#33b1fb&lY&#34abfb&lT&#35a5fb&lU&#379ffb&lŁ&#3899fb&lA&#3a93fb&lM&#3b8dfb&lI &7") + shopMenu.getCurrentPageNum() + "/" + shopMenu.getPagesNum());
+                shopMenu.update();
+            }));
+
+            DecimalFormat df = new DecimalFormat("#");
+
+            for (Title title : notUnlockedTitles) {
+                shopMenu.addItem(ItemBuilder.from(Material.PAPER).setName(translate(title.getPrefix())).setLore(color("&7Koszt: &e" + df.format(title.getPrice()) + "&e$"), " ", color("&8&oKliknij aby zakupić!")).asGuiItem(event -> {
+
+                    Player target = (Player) event.getWhoClicked();
+
+                    if (!canPlayerBuyTitle(target, title.getName())) {
+                        prefix(target, "&cBrak funduszy! ");
+                        prefix(target, "&cKoszt tego tytułu wynosi &e" + df.format(title.getPrice()) + "&e$");
+                        return;
+                    }
+
+                    addPlayerTitle(target.getName(), title.getName());
+                    prefix(target, "&aZakupiłeś/aś tytuł: " + translate(title.getPrefix()));
+                    prefix(target, "&aZnajdziesz go w książce w menu /tytuly!");
+                    Titles.getEcon().withdrawPlayer(target, title.getPrice());
+                    openChooseMenu(target);
+                }));
+            }
+            shopMenu.open(player);
+            shopMenu.updateTitle(translate("&#29dcfb&lS&#2ad6fb&lK&#2cd0fb&lL&#2dcafb&lE&#2fc4fb&lP &#30befb&lZ &#31b8fb&lT&#33b1fb&lY&#34abfb&lT&#35a5fb&lU&#379ffb&lŁ&#3899fb&lA&#3a93fb&lM&#3b8dfb&lI &7") + shopMenu.getCurrentPageNum() + "/" + shopMenu.getPagesNum());
+        } else {
+            openChooseMenu(player);
+        }
+    }
+
+
+    public void openChooseMenu(Player player) {
+
+        Owner owner = Titles.getOwnerController().getOwner(player.getName());
+
+        ArrayList<Title> notUnlockedTitles = new ArrayList<>();
+
+        for (String titleName : availableTitles.keySet()) {
+
+            if (titleName.equalsIgnoreCase("default")) {
                 continue;
             }
 
-            if(!owner.getUnlockedTitles().contains(title)){
+            Title title = availableTitles.get(titleName);
+
+            if (!owner.getUnlockedTitles().contains(title)) {
                 notUnlockedTitles.add(title);
             }
         }
 
-        PaginatedGui paginatedGui = new PaginatedGui(6, " ");
+        PaginatedGui chooseMenu = new PaginatedGui(6, 21, " ", Collections.singleton(InteractionModifier.PREVENT_ITEM_TAKE));
 
-        paginatedGui.setDefaultClickAction(event -> {
+        chooseMenu.setDefaultClickAction(event -> {
             event.setCancelled(true);
         });
 
-        int[] lockedSlots = new int[]{0,1,2,3,4,5,6,7,8,9,17,18,26,27,35,36,44, 45,46,47,48,49,50,51,52,53};
+        int[] grayLocked = new int[]
+                {0, 1, 2, 3, 4, 5, 6, 7, 8,
+                        9,                      17,
+                        18,                     26,
+                        27,                     35,
+                        36,37,38,39,40,41,42,43,44};
 
-        GuiItem fillItem = ItemBuilder.from(Material.GRAY_STAINED_GLASS_PANE).setName(" ").asGuiItem();
+        int[] blackLocked = new int[]
+                {45, 46, 47, 48, 51, 53};
 
-        for(int a : lockedSlots){
-            paginatedGui.setItem(a, fillItem);
+        GuiItem grayFiller = ItemBuilder.from(Material.GRAY_STAINED_GLASS_PANE).name(Component.text(" ")).asGuiItem();
+
+        GuiItem blackFiller = ItemBuilder.from(Material.BLACK_STAINED_GLASS_PANE).name(Component.text(" ")).asGuiItem();
+
+        for (int slot : grayLocked) {
+            chooseMenu.setItem(slot, grayFiller);
         }
 
-        paginatedGui.setItem(50, ItemBuilder.from(Material.LIME_STAINED_GLASS_PANE).setName(ChatUtils.fixColor("&a→")).asGuiItem(event -> {
-
-            String name = ChatUtils.fixColor("&6Strona &e&l" + (paginatedGui.getNextPageNum()));
-            String lore = ChatUtils.fixColor("&7Kliknij aby wrócić do menu.");
-            paginatedGui.setItem(49, ItemBuilder.from(Material.WRITABLE_BOOK).setName(name).setLore("", lore).asGuiItem(event1 -> {
-                Titles.getTitleController().openMainGui((Player) event1.getWhoClicked());
-                //Titles.getCategoryController().openCategorySelect((Player) event1.getWhoClicked());
-            }));
-
-            paginatedGui.update();
-            paginatedGui.next();
-        }));
-
-
-        String lore1 = ChatUtils.fixColor("&7Kliknij aby wrócić do menu.");
-        String name1 = ChatUtils.fixColor("&6Strona &e&l" + 1);
-        paginatedGui.setItem(49, ItemBuilder.from(Material.WRITABLE_BOOK).setName(name1).setLore("", lore1).asGuiItem(event1 -> {
-            Titles.getTitleController().openMainGui((Player) event1.getWhoClicked());
-            //Titles.getCategoryController().openCategorySelect((Player) event1.getWhoClicked());
-        }));
-
-        paginatedGui.setItem(48, ItemBuilder.from(Material.RED_STAINED_GLASS_PANE).setName(ChatUtils.fixColor("&c←")).asGuiItem(event -> {
-
-            String name = ChatUtils.fixColor("&6Strona &e&l" + (paginatedGui.getPrevPageNum()));
-            String lore = ChatUtils.fixColor("&7Kliknij aby wrócić do menu.");
-            paginatedGui.setItem(49, ItemBuilder.from(Material.WRITABLE_BOOK).setName(name).setLore("", lore).asGuiItem(event1 -> {
-                Titles.getTitleController().openMainGui((Player) event1.getWhoClicked());
-                //Titles.getCategoryController().openCategorySelect((Player) event1.getWhoClicked());
-            }));
-            paginatedGui.update();
-            paginatedGui.previous();
-        }));
-
-        DecimalFormat df = new DecimalFormat("#");
-
-        for(Title title : notUnlockedTitles){
-            paginatedGui.addItem(ItemBuilder.from(Material.BOOK).setName(translate(title.getPrefix())).setLore("", ChatUtils.fixColor("&7Cena: &e" + df.format(title.getPrice()) + "&e$")).asGuiItem(event -> {
-
-                Player target = (Player) event.getWhoClicked();
-
-                if(!canPlayerBuyTitle(target, title.getName())){
-                    ChatUtils.sendMessage(target, "&cNie posiadasz wystarczającej ilości pieniędzy!");
-                    return;
-                }
-
-                addPlayerTitle(target.getName(), title.getName());
-                ChatUtils.sendMessage(target, "&aZakupiłeś/aś tytuł: " + translate(title.getPrefix()));
-                ChatUtils.sendMessage(target, "&aTytuły znajdziesz na lewo w menu /tytuly!");
-                Titles.getEcon().withdrawPlayer(target, title.getPrice());
-                paginatedGui.close(target);
-            }));
+        for (int slot : blackLocked) {
+            chooseMenu.setItem(slot, blackFiller);
         }
 
-        paginatedGui.open(player);
-    }
+        chooseMenu.setItem(48, ItemBuilder.from(Material.RED_STAINED_GLASS_PANE).name(Component.text(color("&c←"))).asGuiItem(event2 -> {
+            chooseMenu.previous();
+            chooseMenu.updateTitle(translate("&#45fb7d&lM&#48fb85&lE&#4cfb8e&lN&#4ffb96&lU &#52fb9f&lW&#56fba7&lY&#59fbb0&lB&#5cfbb8&lO&#60fbc1&lR&#63fbc9&lU &7") + chooseMenu.getCurrentPageNum() + "/" + chooseMenu.getPagesNum());
+            chooseMenu.update();
+        }));
 
-    private void openTitleSelect(Player player){
-        Owner owner = Titles.getOwnerController().getOwner(player.getName());
+        String name1 = color("&e&lSKLEP Z TYTUŁAMI");
+        String lore1 = color("&7ᴋʟɪᴋɴɪᴊ, ᴀʙʏ ᴏᴛᴡᴏʀᴢʏᴄ sᴋʟᴇᴘ ᴢ ᴛʏᴛᴜʟᴀᴍɪ!");
 
-        if(owner.getUnlockedTitles().size() >= 1) {
-
-            PaginatedGui paginatedGui = new PaginatedGui(6, "Wybierz tytuł");
-
-            paginatedGui.setDefaultClickAction(event -> {
-                event.setCancelled(true);
-            });
-
-            int[] lockedSlots = new int[]{0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 17, 18, 26, 27, 35, 36, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53};
-
-            GuiItem fillItem = ItemBuilder.from(Material.GRAY_STAINED_GLASS_PANE).setName(" ").asGuiItem();
-
-            for (int a : lockedSlots) {
-                paginatedGui.setItem(a, fillItem);
+        chooseMenu.setItem(49, ItemBuilder.from(Material.PAPER).name(Component.text(name1)).setLore(" ", lore1).asGuiItem(event1 -> {
+            if (notUnlockedTitles.size() != 0) {
+                openShopMenu(player);
+            } else {
+                prefix(player, "&7Posiadasz wszystkie dostępne tytuły!");
             }
+        }));
 
-            //HeadDatabaseAPI api = new HeadDatabaseAPI();
-            paginatedGui.setItem(50, ItemBuilder.from(Material.LIME_STAINED_GLASS_PANE).setName(ChatUtils.fixColor("&a→")).asGuiItem(event -> {
+        chooseMenu.setItem(50, ItemBuilder.from(Material.LIME_STAINED_GLASS_PANE).name(Component.text(color("&a→"))).asGuiItem(event -> {
+            chooseMenu.next();
+            chooseMenu.updateTitle(translate("&#45fb7d&lM&#48fb85&lE&#4cfb8e&lN&#4ffb96&lU &#52fb9f&lW&#56fba7&lY&#59fbb0&lB&#5cfbb8&lO&#60fbc1&lR&#63fbc9&lU &7") + chooseMenu.getCurrentPageNum() + "/" + chooseMenu.getPagesNum());
+            chooseMenu.update();
+        }));
 
-                String name = ChatUtils.fixColor("&6Strona &e&l" + (paginatedGui.getNextPageNum()));
-                String lore = ChatUtils.fixColor("&7Kliknij aby wrócić do menu.");
-                paginatedGui.setItem(49, ItemBuilder.from(Material.WRITABLE_BOOK).setName(name).setLore("", lore).asGuiItem(event1 -> {
-                    openMainGui((Player) event1.getWhoClicked());
-                }));
-
-                paginatedGui.update();
-                paginatedGui.next();
-            }));
-
-            String lore1 = ChatUtils.fixColor("&7Kliknij aby wrócić do menu.");
-            String name1 = ChatUtils.fixColor("&6Strona &e&l" + 1);
-            paginatedGui.setItem(49, ItemBuilder.from(Material.WRITABLE_BOOK).setName(name1).setLore("", lore1).asGuiItem(event1 -> {
-                openMainGui((Player) event1.getWhoClicked());
-            }));
-
-            paginatedGui.setItem(48, ItemBuilder.from(Material.RED_STAINED_GLASS_PANE).setName(ChatUtils.fixColor("&c←")).asGuiItem(event -> {
-
-                String name = ChatUtils.fixColor("&6Strona &e&l" + (paginatedGui.getPrevPageNum()));
-                String lore = ChatUtils.fixColor("&7Kliknij aby wrócić do menu.");
-                paginatedGui.setItem(49, ItemBuilder.from(Material.WRITABLE_BOOK).setName(name).setLore("", lore).asGuiItem(event1 -> {
-                    openMainGui((Player) event1.getWhoClicked());
-                }));
-                paginatedGui.update();
-                paginatedGui.previous();
-            }));
-
-
-            paginatedGui.setItem(43, ItemBuilder.from(Material.BARRIER).setName(ChatUtils.fixColor("&cDezaktywuj tytuł.")).asGuiItem(event -> {
-                setPlayerPrefix(event.getWhoClicked().getName(), "default");
-                ChatUtils.sendMessage(event.getWhoClicked(), "&cDezaktywowano tytuł!");
-                paginatedGui.close(event.getWhoClicked());
-            }));
-
-            for (Title title : owner.getUnlockedTitles()) {
-                paginatedGui.addItem(ItemBuilder.from(Material.PAPER).setName(translate(title.getPrefix())).setLore("", ChatUtils.fixColor("&eKliknij, aby wybrać ten tytuł!")).asGuiItem(event -> {
-                    setPlayerPrefix(event.getWhoClicked().getName(), title.getName());
-                    ChatUtils.sendMessage(event.getWhoClicked(), "&aUstawiono tytuł: " + translate(title.getPrefix()));
-                    paginatedGui.close(event.getWhoClicked());
-                }));
-            }
-
-            paginatedGui.open(player);
+        if(owner.getCurrentTitle().contains("default")){
+            chooseMenu.setItem(52, ItemBuilder.from(Material.PLAYER_HEAD).setSkullOwner(player).name(Component.text(color("&7Aktualny tytuł:"))).setLore(color("&cʙʀᴀᴋ")).asGuiItem());
         } else {
-            Titles.getTitleController().openMainGui(player);
-            ChatUtils.sendMessage(player, "&cNie posiadasz żadnego tytułu!");
-            mainGui.close(player);
+            chooseMenu.setItem(52, ItemBuilder.from(Material.PLAYER_HEAD).setSkullOwner(player).name(Component.text(color("&7Aktualny tytuł:"))).setLore(translate(getTitle(owner.getCurrentTitle()).getPrefix())).asGuiItem());
         }
 
+        for (Title title : owner.getUnlockedTitles()) {
+            ItemStack is = new ItemStack(Material.PAPER);
+            ItemMeta im = is.getItemMeta();
+
+            if (Objects.equals(title.getName(), owner.getCurrentTitle())) {
+
+                im.addEnchant(Enchantment.MENDING, 1, true);
+                im.setLore(Arrays.asList(color("&aᴀᴋᴛᴜᴀʟɴɪᴇ ᴡʏʙʀᴀɴʏ ᴛʏᴛᴜʟ"), " ", color("&cᴋʟɪᴋɴɪᴊ, ᴀʙʏ ᴅᴇᴢᴀᴋᴛʏᴡᴏᴡᴀᴄ!")));
+                im.addItemFlags(ItemFlag.HIDE_ENCHANTS);
+                im.setDisplayName(translate(title.getPrefix()));
+
+                is.setItemMeta(im);
+
+                chooseMenu.addItem(ItemBuilder.from(is).asGuiItem(event -> {
+                    Player target = (Player) event.getWhoClicked();
+                    setPlayerPrefix(target.getName(), "default");
+                    prefix(target, "&cDezaktywowano tytuł!");
+                    ItemMeta im2 = is.getItemMeta();
+                    im2.setLore(Arrays.asList(color("&7ᴋʟɪᴋɴɪᴊ, ᴀʙʏ ᴡʏʙʀᴀᴄ ᴛᴇɴ ᴛʏᴛᴜʟ!")));
+                    im2.removeEnchant(Enchantment.MENDING);
+                    is.setItemMeta(im2);
+                    openChooseMenu(player);
+                }));
+            } else {
+
+                im.setLore(Arrays.asList(color("&7ᴋʟɪᴋɴɪᴊ, ᴀʙʏ ᴡʏʙʀᴀᴄ ᴛᴇɴ ᴛʏᴛᴜʟ!")));
+                im.setDisplayName(translate(title.getPrefix()));
+
+                is.setItemMeta(im);
+
+                chooseMenu.addItem(ItemBuilder.from(is).asGuiItem(event -> {
+                    Player target = (Player) event.getWhoClicked();
+                    setPlayerPrefix(target.getName(), title.getName());
+                    prefix(target, "&7Ustawiono tytuł: " + translate(title.getPrefix()));
+                    openChooseMenu(player);
+                }));
+            }
+        }
+        chooseMenu.open(player);
+        chooseMenu.updateTitle(translate("&#45fb7d&lM&#48fb85&lE&#4cfb8e&lN&#4ffb96&lU &#52fb9f&lW&#56fba7&lY&#59fbb0&lB&#5cfbb8&lO&#60fbc1&lR&#63fbc9&lU &7") + chooseMenu.getCurrentPageNum() + "/" + chooseMenu.getPagesNum());
     }
 
     private String translate(String msg2) {

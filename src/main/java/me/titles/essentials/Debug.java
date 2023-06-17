@@ -1,39 +1,9 @@
 package me.titles.essentials;
 
 import org.bukkit.Bukkit;
-import org.bukkit.command.ConsoleCommandSender;
 
 public class Debug {
-
-    private static final ConsoleCommandSender console = Bukkit.getConsoleSender();
-    private static String prefix = "[Titles]";
-
-    /**
-     * Sends string to console
-     * @param a Message to send
-     */
-    public static void log(String a) {
-        a = prefix +" "+ a;
-        console.sendMessage(a.replace("&", "§"));
+    public static void log(String message) {
+        Bukkit.getConsoleSender().sendMessage("[TITLES] " + message.replace("&", "§"));
     }
-
-    /**
-     * Sends red error to console
-     * @param a Error to send
-     */
-    public static void sendError(String a){
-        Debug.log("&c============");
-        Debug.log("&c" + a);
-        Debug.log("&c============");
-    }
-
-    /**
-     * Sends object to console
-     * @param a Object to send
-     */
-    public static void log(Object a) {
-        a = prefix + a;
-        console.sendMessage(String.valueOf(a).replace("&", "§"));
-    }
-
 }

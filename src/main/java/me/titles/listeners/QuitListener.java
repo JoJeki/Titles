@@ -10,10 +10,7 @@ public class QuitListener implements Listener {
 
     @EventHandler
     public void onQuit(PlayerQuitEvent event){
-
         Player player = event.getPlayer();
-
         Titles.getOwnerController().savePlayer(player.getName());
-
     }
 }

@@ -1,50 +1,28 @@
 package me.titles.essentials;
 
-import org.bukkit.Bukkit;
-import org.bukkit.command.CommandSender;
+import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
+
+import java.awt.*;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
+import static me.titles.Titles.prefix;
 
 public class ChatUtils {
 
-    private static String prefix = "&8&lPRISON &7» &r";
-
-    /**
-     * Changes & to minecraft colors
-     * @param message Message to fix
-     * @return Returns ready message
-     */
-    public static String fixColor(String message){
-        message = message.replace("&","§");
-        return message;
+    public static void prefix(Player player, String message){
+        player.sendMessage(ChatColor.translateAlternateColorCodes('&', prefix + message));
     }
 
-    /**
-     * Sends colored message to online Players
-     * @param message Message to send
-     */
-    public static void broadcast(String message){
-        for(Player player : Bukkit.getOnlinePlayers()){
-            ChatUtils.sendMessage(player, message);
+    public static String color(String msg) {
+        Pattern pattern = Pattern.compile("#[a-fA-F0-9]{6}");
+        Matcher match = pattern.matcher(msg);
+        while (match.find()) {
+            String color = msg.substring(match.start(), match.end());
+            msg = msg.replace(color, net.md_5.bungee.api.ChatColor.of(Color.decode(color)) + "");
+            match = pattern.matcher(msg);
         }
+        return org.bukkit.ChatColor.translateAlternateColorCodes('&', msg.replace("{", "").replace("}", ""));
     }
-
-    /**
-     * Sends colored message to Player
-     * @param player Player that receives message
-     * @param message Message to send
-     */
-    public static void sendMessage(Player player, String message){
-        player.sendMessage(fixColor(prefix + message));
-    }
-
-    /**
-     * Sends colored message to CommandSender
-     * @param player CommandSender that receives message
-     * @param message Message to send
-     */
-    public static void sendMessage(CommandSender player, String message){
-        player.sendMessage(fixColor(prefix + message));
-    }
-
-
 }
